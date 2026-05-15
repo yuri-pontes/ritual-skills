@@ -20,19 +20,22 @@ O log cresce do mais recente pro mais antigo. Topo = hoje.
 
 ## Instalação
 
-1. Copia as 4 pastas de skill pra dentro de `~/.claude/skills/` (uso global em qualquer projeto) ou `<seu-projeto>/.claude/skills/` (uso só naquele projeto):
+Cola isso no terminal (instala global, funciona em qualquer projeto):
 
 ```bash
-cp -r ritual/ritual-check-in ritual/ritual-log ritual/ritual-entrevista ritual/ritual-backlog ~/.claude/skills/
+mkdir -p ~/.claude/skills && cd ~/.claude/skills && git clone https://github.com/yuri-pontes/ritual-skills.git && mv ritual-skills/ritual-* . && rm -rf ritual-skills
 ```
 
-2. Roda qualquer um dos rituais pela primeira vez. O Claude detecta que não tem config e te conduz no setup (~1 minuto). Pergunta:
-   - Teu nome
-   - Onde guardar os arquivos (default `~/Documents/ritual/`)
-   - Que blocos da entrevista noturna ligar (corpo, dinheiro, hábitos, etc, modular)
-   - Se tem Google Calendar conectado via MCP
+Pra instalar só num projeto específico, troca `~/.claude/skills` por `<seu-projeto>/.claude/skills`.
 
-3. Pronto. A config fica em `~/.ritual/config.json` e os arquivos em `<base_path>/log-diario.md` e `<base_path>/backlog.md`.
+Depois roda qualquer um dos rituais pela primeira vez. O Claude detecta que não tem config e te conduz no setup (~1 minuto). Pergunta:
+
+- Teu nome
+- Onde guardar os arquivos (default `~/Documents/ritual/`)
+- Que blocos da entrevista noturna ligar (corpo, dinheiro, hábitos, etc, modular)
+- Se tem Google Calendar conectado via MCP
+
+A config fica em `~/.ritual/config.json` e os arquivos em `<base_path>/log-diario.md` e `<base_path>/backlog.md`.
 
 ## Filosofia
 
