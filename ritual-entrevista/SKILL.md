@@ -1,138 +1,155 @@
 ---
 name: ritual-entrevista
-description: Conduz a entrevista noturna de fechamento do dia. Uma pergunta por vez (nunca formulário inteiro), pré-preenche o que já tem do log e da agenda, calcula nota do dia, gera bloco final pro log-diário e propõe o plano de amanhã. Use quando o usuário disser "fecha meu dia", "entrevista noturna", "me entrevista", "fecha o dia", "boa noite organiza aí".
+description: Ritual de fechamento do dia. Devolve um resumo do dia, resgata o que você fez mas esqueceu de anotar, conduz uma entrevista uma pergunta por vez (só as métricas das áreas que você ligou), calcula a nota do dia e monta o plano de amanhã. Use quando o usuário disser "fecha meu dia", "entrevista noturna", "me entrevista", "fecha o dia", "boa noite organiza aí".
 ---
 
 # Ritual: Entrevista Noturna
 
-Ritual diário de fechamento. Primeiro coleta dados objetivos, depois abre pra narrativa. Conduzir UMA pergunta por vez. Nunca jogar o formulário inteiro de uma vez.
+Ritual diário de fechamento. Resgata o que rolou, coleta os dados das áreas ativas, fecha com a nota e o plano de amanhã. Conduzir UMA pergunta por vez. Nunca jogar o formulário inteiro de uma vez.
 
-## Setup obrigatório (rodar só se não houver config)
+## Setup (só na primeira vez — se não houver `~/.ritual/config.json`)
 
-Verifica se existe `~/.ritual/config.json`. Se NÃO existir, executa o onboarding:
+Se a config existir, pular pra execução. Se NÃO existir, conduzir o onboarding, uma pergunta por vez:
 
-1. "É a primeira vez que você usa o Ritual. Vou te configurar em 1 minuto."
-2. Pergunta uma de cada vez: nome, base_path (default `~/Documents/ritual/`), `calendar_mcp` (sim/não), blocos opcionais a ligar (lista modular: água, remédios, passos, peso, sol, banho, humor, ansiedade, libido, álcool, cigarros, pornô, trabalho profundo, tempo de tela, conteúdo postado, saiu de casa, contato social, música/projeto pessoal). Sono, dinheiro, vitória, onde escapou e plano de amanhã são sempre ligados.
-3. Cria `~/.ritual/config.json` com `{nome, base_path, log_file: "log-diario.md", backlog_file: "backlog.md", calendar_mcp, blocos_ativos, criado_em}`.
-4. Cria `<base_path>/log-diario.md` com cabeçalho `# Log Diário\n\nDiário de bordo. Cresce do mais recente pro mais antigo (topo = hoje). Não é to-do, é histórico.\n\n---\n` e `<base_path>/backlog.md` com `# Backlog\n\n` se não existirem.
-5. Lê `dicas-uso.md` (mesma pasta dessa skill) e exibe um resumo curto: as 3 primeiras dicas de "O que faz a diferença" + "Rotina mínima diária". Avisa que o arquivo completo fica disponível pra leitura quando quiser.
-6. Segue pra entrevista.
+1. "Primeira vez aqui. Vou te configurar em 1 minuto — depois é só rodar." Pergunta o nome.
+2. Onde guardar os arquivos? (default `~/Documents/ritual/`, aceita caminho absoluto)
+3. **Quais áreas da vida você quer destravar ou acompanhar agora?** Lista abaixo, **recomenda começar com 1 ou 2** — área abandonada em três dias mata o ritual:
+   - 🫀 Saúde física → treino, passos, peso, água, sol
+   - 🧠 Saúde mental → humor, ansiedade, libido
+   - 💰 Trabalho & dinheiro → trabalho profundo, tempo de tela, receita, gasto, avanço comercial
+   - 🤝 Relações & presença → saiu de casa, contato social real
+   - 🚭 Vícios & escapes → cigarro, álcool, pornô
+   - 🎯 Projeto pessoal → a pessoa nomeia (instrumento, escrita, esporte, estudo, o que for)
+4. Dentro de cada área, confirma quais métricas ligar.
+5. (Se ligou Projeto pessoal) Qual prática quer manter no radar? Nome livre.
+6. Tem Google Calendar conectado via MCP? (sim/não, default não).
+7. (Opcional) Usa gravador de call conectado — Fathom, Otter, etc? (sim/não, default não).
+8. Grava `~/.ritual/config.json` (schema em `config.exemplo.json` na raiz) e cria `<base_path>/log-diario.md` (cabeçalho abaixo) e `<base_path>/backlog.md` com `# Backlog\n\n`, se não existirem.
+9. Mostra um resumo curto de uso e segue pra entrevista.
+
+Cabeçalho do `log-diario.md`:
+```md
+# Log Diário
+
+Diário de bordo. Cresce do mais recente pro mais antigo (topo = hoje). Não é to-do, é histórico.
+
+---
+```
+
+Núcleo sempre ligado: **sono** (vem do check-in), **vitória**, **onde escapou**, **plano de amanhã**, **nota do dia**.
 
 ## Tom
 
-- Direto, sem bronca, sem cobrança moral
-- Dados primeiro, história depois
-- Reforçar progresso real antes de nomear fricção
+- Direto, sem bronca, sem cobrança moral.
+- Dados primeiro, história depois.
+- Reforçar progresso real antes de nomear fricção.
 - Nunca transformar em planilha. É conversa.
 
-## Pré-leitura obrigatória (em paralelo)
+## Passo 0 — Resgate do dia (anti-esquecimento)
 
-1. Lê `~/.ritual/config.json` pra pegar `nome`, `base_path`, `calendar_mcp`, `blocos_ativos`.
-2. Lê a entrada de hoje em `<base_path>/log-diario.md` (se existir): puxa qualquer registro retroativo já feito (gastos, receita, calls, derrapadas).
-3. Se `calendar_mcp = true`, puxa eventos do Google Calendar do dia atual: infere se saiu de casa, contato social real, deslocamentos.
+Objetivo: não deixar o que você fez hoje sumir só porque você esqueceu de anotar. Sempre acontece, com ou sem integração:
 
-Usa essas fontes pra **pré-preencher** respostas. Em vez de perguntar do zero, apresenta o que achou e pede confirmação. Ex: "Pelo log você teve gasto de R$X com Y. Faltou algo?" ou "Pela agenda você teve A, B e C. Confere?". Só pergunta do zero o que não foi achado.
+1. **Leitura das fontes conectadas** (só as que estão em `integracoes`):
+   - `calendar = true`: lê os eventos de hoje no Google Calendar.
+   - `gravador_call = true`: puxa as calls gravadas de hoje (Fathom/Otter/etc via MCP disponível) + os action items.
+2. **A pergunta de resgate** (sempre, mesmo sem integração): cruza o que achou nas fontes contra o que já está no log de hoje e pergunta:
 
-## Roteiro modular
+> Antes de fechar: além do que já está aqui, o que mais você fez hoje que não anotou?
 
-Lê `blocos_ativos` da config e SÓ FAZ as perguntas dos blocos ligados. Ordem fixa abaixo, blocos desligados são puláveis.
+3. Apresentar só o que parece faltar, em lista curta. **Nunca escrever no log a partir das fontes sem o usuário confirmar** — fonte é candidato, não verdade. Registrar só o que ele aceitar.
 
-### Bloco 1 — Sono (sempre ligado)
+Se nada faltar, seguir silencioso pro Passo 1.
 
-> Quantas horas dormiu ontem à noite?
-> Como foi a qualidade? (ótimo / ok / ruim)
-> Que hora acordou hoje e que hora pretende dormir hoje?
+## Passo 1 — Pré-leitura (em paralelo)
 
-### Bloco 2 — Corpo (subperguntas conforme blocos ligados)
+1. Lê `~/.ritual/config.json` (`nome`, `base_path`, `areas_ativas`, `metricas_ativas`, `projetos_pessoais`, `integracoes`, `financeiro_separado`).
+2. Lê a entrada de hoje em `<base_path>/log-diario.md`: puxa o sono (capturado de manhã pelo check-in) e qualquer registro retroativo (gastos, receita, calls).
+3. Se `calendar = true`, lê a agenda de hoje (infere saídas, contato social) e a de amanhã (pro planejamento).
 
-Sequência, uma por vez. Pula a pergunta se o bloco correspondente NÃO está em `blocos_ativos`:
+Usar essas fontes pra **pré-preencher** respostas. Em vez de perguntar do zero, apresenta o que achou e pede confirmação. Ex: "Pelo log você gastou R$X com Y, faltou algo?" / "Pela agenda você teve A e B, confere?".
 
-- treino: > Treinou ou se moveu hoje? O que foi?
-- passos: > Quantos passos hoje?
-- peso: > Pesou hoje? Quanto?
-- agua: > Quanto bebeu de água? (litros ou copos)
-- cigarros: > Quantos cigarros hoje?
-- alcool: > Bebeu álcool? O que e quanto?
-- porno: > Pornô: sim ou não.
-- remedios: > Tomou todos os remédios hoje?
-- banho: > Banho hoje? Quantas vezes?
-- sol: > Tomou sol hoje?
+## Passo 1.5 — Resumo do dia [sempre]
 
-### Bloco 3 — Estado mental (subperguntas conforme blocos ligados)
+Antes de abrir o primeiro bloco, devolver um resumo factual do dia em prosa curta (3-6 linhas), cruzando log + agenda + o que veio no resgate. É gatilho de memória — o que ele registrou de manhã pode ter sumido da cabeça à noite.
 
-- humor: > Humor: nota de 0 a 10.
-- ansiedade: > Ansiedade: nota de 0 a 10.
-- libido: > Libido: nota de 0 a 10.
+Tom jornalístico, sem floreio. Fechar com: "Faz sentido? Faltou algo grande antes da gente começar?". Se complementar, guardar pra síntese final.
 
-### Bloco 4 — Trabalho e dinheiro (sempre ligado, subperguntas conforme blocos)
+## Passo 2 — Blocos (só as áreas e métricas ligadas)
 
-- trabalho_profundo: > Quantas horas de trabalho profundo hoje?
-- tempo_tela: > Quantas horas de tela fora do trabalho?
-- dinheiro (sempre): > Quanto entrou de dinheiro real hoje? (R$)
-- dinheiro (sempre): > Quanto gastou hoje? (R$)
-- dinheiro (sempre): > Teve avanço comercial hoje? O que foi?
-- conteudo: > Postou conteúdo hoje? Qual plataforma?
+Ler `metricas_ativas` e **só perguntar o que está ligado**. Ordem fixa abaixo; pular qualquer métrica que não esteja na config. Uma pergunta por vez.
 
-### Bloco 5 — Vida e presença (subperguntas conforme blocos ligados)
+**Sono (núcleo):** já veio do check-in. Não perguntar de novo — só confirmar de leve se não estiver no log. Perguntar só: "Que horas pretende dormir hoje?"
 
-- saiu_de_casa: > Saiu de casa hoje?
-- contato_social: > Teve contato social real hoje? Com quem? (conversa de mais de 5 min, WhatsApp não conta)
-- musica: > Ouviu ou produziu música hoje? / Mexeu em algum projeto pessoal?
+**🫀 Saúde física:** treino ("Treinou ou se moveu? O quê?") · passos ("Quantos passos?") · peso ("Pesou? Quanto?") · água ("Quanto de água?") · sol ("Tomou sol?")
 
-### Pontuação
+**🧠 Saúde mental:** humor ("Humor, 0 a 10") · ansiedade ("Ansiedade, 0 a 10") · libido ("Libido, 0 a 10")
 
-Calcular sem perguntar de novo, só mostrar a conta:
+**💰 Trabalho & dinheiro:** trabalho_profundo ("Horas de trabalho profundo?") · tempo_tela ("Horas de tela fora do trabalho?") · receita ("Quanto entrou de dinheiro real? R$") · gasto ("Quanto gastou? R$" — se `financeiro_separado = true`, registrar também em `<base_path>/financeiro.md`) · avanco_comercial ("Teve avanço comercial? O quê?")
 
-| Pilar | Critério | Pontos |
+**🤝 Relações & presença:** saiu_de_casa ("Saiu de casa?") · contato_social ("Teve contato social real? Com quem? Conversa de 5+ min, WhatsApp não conta")
+
+**🚭 Vícios & escapes:** cigarro ("Quantos cigarros?") · alcool ("Bebeu? O quê e quanto?") · porno ("Pornô: sim ou não")
+
+**🎯 Projeto pessoal:** pra cada item de `projetos_pessoais` ("Mexeu em <projeto> hoje? O quê?")
+
+## Passo 3 — Nota do dia (calcular, não perguntar)
+
+A nota se adapta às áreas ligadas. Núcleo sempre conta; cada área ativa soma um componente. Somar os componentes ativos e **normalizar pra 0-10** (regra de três sobre o máximo possível). Mostrar a conta.
+
+| Componente | Critério | Pontos |
 |---|---|---|
-| Corpo | movimento + água ≥ 1,5L + remédios em dia | 0 a 3 |
-| Dinheiro | receita real OU avanço comercial concreto | 0 a 3 |
-| Sono | 7h+ = 2 / 5-6h = 1 / <5h = 0 | 0 a 2 |
-| Presença | humor 7+ E contato social real | 0 a 2 |
+| Sono (núcleo) | 7h+ = 2 / 5-6h = 1 / <5h = 0 | 0–2 |
+| Foco (núcleo) | cumpriu a ação principal do plano de ontem + teve vitória real | 0–2 |
+| 🫀 Saúde física | movimento + hidratação/cuidado do dia | 0–2 |
+| 💰 Trabalho & dinheiro | receita real OU avanço concreto OU bloco de trabalho profundo | 0–3 |
+| 🧠 Saúde mental | humor 6+ e ansiedade sob controle | 0–2 |
+| 🤝 Relações & presença | contato social real OU saiu de casa | 0–2 |
+| 🚭 Vícios & escapes | ficou dentro do limite que definiu, sem escape grande | 0–2 |
+| 🎯 Projeto pessoal | dedicou tempo à prática | 0–1 |
 
-Total 0 a 10. Faixas: 8-10 dia forte / 6-7 dia útil / 4-5 manutenção / 0-3 resgate sem drama.
+Faixas: 8-10 dia forte / 6-7 dia útil / 4-5 manutenção / 0-3 resgate, sem drama.
 
-Mostra a nota ANTES de abrir a narrativa.
+**Mostrar a nota ANTES de abrir a narrativa.**
 
-### Narrativa (sempre)
+## Passo 4 — Narrativa (sempre)
 
-> Qual foi a vitória do dia, mesmo pequena?
-> Onde o dia escapou da tua mão?
-> Tem algo que queira registrar antes de fechar?
+Uma por vez:
 
-### Plano de amanhã (sempre)
+1. Qual foi a vitória do dia, mesmo pequena?
+2. Onde o dia escapou da sua mão?
+3. Tem algo que queira registrar antes de fechar?
 
-Antes de perguntar, se `calendar_mcp = true`, puxa agenda de amanhã (com data + dia da semana) e apresenta a janela real de tempo livre. Se houver `<base_path>/backlog.md`, mostra um resumo das pendências relevantes.
+## Passo 5 — Plano de amanhã (sempre)
 
-> Qual a ação principal de dinheiro amanhã?
-> Quando é teu pico de energia amanhã? (manhã cedo / meio da manhã / tarde / noite)
-> Qual o compromisso de corpo amanhã?
-> O que pode te tirar do foco amanhã? E o que vai fazer pra evitar?
-> O que precisa acontecer amanhã pra dormir satisfeito?
+Antes de perguntar: se `calendar = true`, apresentar a agenda de amanhã (data + dia da semana) e a janela real de tempo livre. Se houver pendências no `backlog.md`, mostrar as relevantes.
 
-## Saída final
+Uma por vez:
 
-Gerar este bloco e ESCREVER no topo de `<base_path>/log-diario.md` (logo abaixo do cabeçalho, antes da entrada anterior). Omitir linhas dos blocos NÃO ativos.
+1. Qual é a ação principal de amanhã? (se Trabalho & dinheiro ligada, focar em dinheiro/avanço)
+2. Quando é seu pico de energia amanhã? (manhã cedo / meio da manhã / tarde / noite)
+3. Qual é o compromisso de corpo amanhã?
+4. O que pode te tirar do foco amanhã? E o que vai fazer pra evitar?
+5. O que precisa acontecer amanhã pra você dormir satisfeito?
+6. O que você quer fazer amanhã só porque quer, sem ser trabalho? (intenção pessoal)
+
+## Passo 6 — Gerar o bloco do log
+
+Montar o bloco com tudo preenchido, **omitindo as linhas das métricas não ligadas**. Métricas numéricas no formato padronizado (`**Sono:** 7.5h`, `**Água:** 2L`, etc.) pra manter o histórico analisável.
 
 ```md
 ### YYYY-MM-DD — Entrevista Noturna
 
-**Nota do dia:** X/10
+**Nota:** X/10
 
-**Sono:** Xh, qualidade <ótimo/ok/ruim>. Acordou HH:MM. Pretende dormir HH:MM.
+**Sono:** Xh | qualidade: ótimo/ok/ruim | acordou: HH:MM | dormir: HH:MM
 
-**Corpo:** <só os campos ativos: treino, passos, peso, água, cigarros, álcool, pornô, remédios, banho, sol>
-
-**Mental:** <só os campos ativos: humor, ansiedade, libido>
-
+<só as métricas ativas, uma por linha, formato padronizado>
+**Treino:** ...
+**Água:** XL
 **Trabalho profundo:** Xh
-**Tempo de tela (lazer):** Xh
-**Receita do dia:** R$
-**Gastos:** R$
-**Avanço comercial:**
-**Conteúdo postado:**
-
-**Vida:** <só os campos ativos: saiu de casa, contato social, música/projeto>
+**Receita:** R$
+**Gasto:** R$
+...
 
 **Vitória:**
 **Onde escapou:**
@@ -144,8 +161,16 @@ Gerar este bloco e ESCREVER no topo de `<base_path>/log-diario.md` (logo abaixo 
 - Corpo:
 - Risco + contramedida:
 - Definição de vitória:
+- Intenção pessoal:
 
 ---
 ```
 
-Confirmar com uma linha curta: "Fechado. Nota X/10. Bom descanso."
+Perguntar: "Adiciono ao log agora?". Se sim, escrever no topo de `<base_path>/log-diario.md` (logo abaixo do cabeçalho, antes da entrada anterior). Fechar com uma linha curta: "Fechado. Nota X/10. Bom descanso."
+
+## Regras
+
+- Passo 0 (resgate) e Passo 1.5 (resumo) são sempre feitos. O resto se adapta às áreas ligadas.
+- Uma pergunta por vez. Pré-preencher tudo que der pra inferir antes de perguntar.
+- Nunca escrever no log a partir das fontes sem confirmação. Fonte é candidato, não verdade.
+- Mostrar a nota antes da narrativa. Nunca virar planilha ou cobrança.

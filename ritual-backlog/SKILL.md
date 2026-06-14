@@ -5,65 +5,68 @@ description: Varre as últimas entradas do log-diário, extrai pendências e fol
 
 # Ritual: Backlog
 
-Vista derivada do log. O log captura a vida acontecendo, e muita coisa que aparece lá vira tarefa. Sem extração periódica, vira histórico morto.
+Vista derivada do log. O log captura a vida acontecendo, e muita coisa que aparece lá vira tarefa. Sem extração periódica, vira histórico morto. Roda semanal, não diário.
 
-## Setup obrigatório (rodar só se não houver config)
+## Setup (só na primeira vez — se não houver `~/.ritual/config.json`)
 
-Verifica se existe `~/.ritual/config.json`. Se NÃO existir, executa o onboarding:
+Se a config existir, pular pra execução. Se NÃO existir, conduzir o onboarding, uma pergunta por vez:
 
-1. "É a primeira vez que você usa o Ritual. Vou te configurar em 1 minuto."
-2. Pergunta uma de cada vez: nome, base_path (default `~/Documents/ritual/`), `calendar_mcp` (sim/não), blocos opcionais a ligar (lista modular: água, remédios, passos, peso, sol, banho, humor, ansiedade, libido, álcool, cigarros, pornô, trabalho profundo, tempo de tela, conteúdo postado, saiu de casa, contato social, música/projeto pessoal). Sono, dinheiro, vitória, onde escapou e plano de amanhã são sempre ligados.
-3. Cria `~/.ritual/config.json` com `{nome, base_path, log_file: "log-diario.md", backlog_file: "backlog.md", calendar_mcp, blocos_ativos, criado_em}`.
-4. Cria `<base_path>/log-diario.md` com cabeçalho `# Log Diário\n\nDiário de bordo. Cresce do mais recente pro mais antigo (topo = hoje). Não é to-do, é histórico.\n\n---\n` e `<base_path>/backlog.md` com `# Backlog\n\n` se não existirem.
-5. Lê `dicas-uso.md` (mesma pasta dessa skill) e exibe um resumo curto: as 3 primeiras dicas de "O que faz a diferença" + "Rotina mínima diária". Avisa que o arquivo completo fica disponível pra leitura quando quiser.
-6. Segue pro ritual de backlog.
+1. "Primeira vez aqui. Vou te configurar em 1 minuto — depois é só rodar." Pergunta o nome.
+2. Onde guardar os arquivos? (default `~/Documents/ritual/`, aceita caminho absoluto)
+3. **Quais áreas da vida você quer destravar ou acompanhar agora?** Lista abaixo, **recomenda começar com 1 ou 2**:
+   - 🫀 Saúde física → treino, passos, peso, água, sol
+   - 🧠 Saúde mental → humor, ansiedade, libido
+   - 💰 Trabalho & dinheiro → trabalho profundo, tempo de tela, receita, gasto, avanço comercial
+   - 🤝 Relações & presença → saiu de casa, contato social real
+   - 🚭 Vícios & escapes → cigarro, álcool, pornô
+   - 🎯 Projeto pessoal → a pessoa nomeia (instrumento, escrita, esporte, estudo, o que for)
+4. Dentro de cada área, confirma quais métricas ligar.
+5. (Se ligou Projeto pessoal) Qual prática quer manter no radar? Nome livre.
+6. Tem Google Calendar conectado via MCP? (sim/não, default não).
+7. (Opcional) Usa gravador de call conectado? (sim/não, default não).
+8. Grava `~/.ritual/config.json` (schema em `config.exemplo.json` na raiz) e cria `<base_path>/log-diario.md` e `<base_path>/backlog.md` com `# Backlog\n\n`, se não existirem.
+9. Mostra um resumo curto de uso e segue pro ritual de backlog.
 
 ## Execução
 
 ### 1. Pré-leitura
 
-1. Lê `~/.ritual/config.json` pra pegar `base_path`, `log_file`, `backlog_file`.
-2. Lê `<base_path>/<log_file>` inteiro (ou últimos 30 dias se for muito grande).
+1. Lê `~/.ritual/config.json` (`base_path`, `log_file`, `backlog_file`).
+2. Lê `<base_path>/<log_file>` (ou os últimos 30 dias, se for muito grande).
 3. Lê `<base_path>/<backlog_file>` pra saber o que já está lá.
 
-### 2. Pergunta de escopo
+### 2. Escopo
 
-> Quer extrair de quanto tempo? (últimos 7 dias / últimos 30 dias / desde o último ritual de backlog / tudo)
+> De quanto tempo quer extrair? (últimos 7 dias / últimos 30 dias / desde o último backlog / tudo)
 
 Default: últimos 7 dias.
 
 ### 3. Extração
 
-Varre as entradas do log no escopo escolhido e identifica candidatos a backlog. Padrões a procurar:
+Varre as entradas do log no escopo e identifica candidatos a tarefa. Padrões:
 
-- Verbos de intenção: "preciso", "vou", "tenho que", "falta", "ainda devo", "voltar nisso", "lembrar de"
-- Próximos passos de calls/reuniões: "combinado: X", "ficou de me mandar Y", "vou ligar pro Z"
-- Decisões pendentes: "decidir entre", "definir até", "esperando resposta de"
-- Compromissos verbais: "prometi", "disse que faria"
-- Bloqueios mencionados: "travado em", "depende de"
+- Verbos de intenção: "preciso", "vou", "tenho que", "falta", "voltar nisso", "lembrar de".
+- Próximos passos de calls: "combinado: X", "ficou de me mandar Y", "vou ligar pro Z".
+- Decisões pendentes: "decidir entre", "definir até", "esperando resposta de".
+- Compromissos verbais: "prometi", "disse que faria".
+- Bloqueios: "travado em", "depende de".
 
-Pra cada candidato, monta:
-- **Tarefa** (verbo no infinitivo, direto): "Ligar pro João sobre proposta"
-- **Origem**: data da entrada do log de onde saiu
-- **Prazo** (se mencionado): senão, em branco
-- **Categoria** (se óbvio pelo contexto): trabalho / pessoal / saúde / projeto X
+Pra cada candidato: **tarefa** (verbo no infinitivo), **origem** (data do log), **prazo** (se mencionado), **categoria** (se óbvia pelo contexto).
 
 ### 4. Apresentação
 
-Mostra a lista de candidatos numerada, agrupada por categoria quando claro. Pra cada um:
+Lista numerada, agrupada por categoria quando claro:
 
 ```
-[N] <Tarefa> (origem: log de YYYY-MM-DD)
-    <prazo se houver>
+[N] <Tarefa> (origem: log de YYYY-MM-DD) — <prazo se houver>
 ```
 
-Pergunta no fim:
-> Quais entram no backlog? (ex: "todas", "1 3 5", "só as de trabalho", "nenhuma")
-> Quer editar alguma antes de salvar? (n/edita o número)
+Fecha com:
+> Quais entram? (ex: "todas", "1 3 5", "só as de trabalho", "nenhuma") · Quer editar alguma antes?
 
 ### 5. Escrita
 
-Pega as aprovadas e adiciona em `<base_path>/<backlog_file>` agrupadas por categoria. Formato:
+Adiciona as aprovadas em `<base_path>/<backlog_file>`, agrupadas por categoria:
 
 ```md
 ## <Categoria>
@@ -71,18 +74,16 @@ Pega as aprovadas e adiciona em `<base_path>/<backlog_file>` agrupadas por categ
 - [ ] <Tarefa> _<origem: YYYY-MM-DD>_ <prazo se houver>
 ```
 
-Não duplica: se a tarefa já existe (match aproximado por palavras-chave), pula e avisa.
-
-Não toca no log-diário. O log permanece intocado.
+Não duplica (match aproximado por palavra-chave): se já existe, pula e avisa. Não toca no log.
 
 ### 6. Confirmação
 
-Linha curta: "Adicionei N tarefas no backlog. M já estavam lá, puladas."
+"Adicionei N tarefas. M já estavam lá, puladas."
 
 ## Regras
 
-- Não inventar tarefas que não estão no log
-- Não traduzir registro casual em obrigação ("escapei e comi besteira" NÃO vira "comer melhor")
-- Se a entrada do log já indica que a coisa foi resolvida ("liguei pro João, fechado"), não puxar
-- Conservador: melhor sub-extrair do que poluir o backlog
-- Quando em dúvida sobre categoria, deixa em "geral"
+- Não inventar tarefa que não está no log.
+- Não traduzir registro casual em obrigação ("comi besteira" NÃO vira "comer melhor").
+- Se o log já indica resolução ("liguei pro João, fechado"), não puxar.
+- Conservador: melhor sub-extrair do que poluir o backlog.
+- Em dúvida sobre categoria, "geral".

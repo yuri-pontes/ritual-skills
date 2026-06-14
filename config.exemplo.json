@@ -1,0 +1,40 @@
+{
+  "_comentario": "Exemplo de ~/.ritual/config.json. Gerado pelo setup na primeira execução. Edite à mão pra ligar/desligar áreas, métricas e integrações.",
+
+  "nome": "Alex",
+  "base_path": "~/Documents/ritual",
+  "log_file": "log-diario.md",
+  "backlog_file": "backlog.md",
+
+  "areas_ativas": ["saude_fisica", "trabalho_dinheiro"],
+
+  "metricas_ativas": [
+    "treino",
+    "agua",
+    "trabalho_profundo",
+    "receita",
+    "gasto"
+  ],
+
+  "projetos_pessoais": [],
+
+  "financeiro_separado": false,
+
+  "integracoes": {
+    "calendar": false,
+    "gravador_call": false
+  },
+
+  "criado_em": "2026-06-14",
+
+  "_catalogo_areas": {
+    "saude_fisica": ["treino", "passos", "peso", "agua", "sol"],
+    "saude_mental": ["humor", "ansiedade", "libido"],
+    "trabalho_dinheiro": ["trabalho_profundo", "tempo_tela", "receita", "gasto", "avanco_comercial"],
+    "relacoes_presenca": ["saiu_de_casa", "contato_social"],
+    "vicios_escapes": ["cigarro", "alcool", "porno"],
+    "projeto_pessoal": ["projetos_pessoais (nome livre, definido no setup)"]
+  },
+
+  "_nucleo_sempre_ligado": ["sono", "vitoria", "onde_escapou", "plano_amanha", "nota"]
+}
