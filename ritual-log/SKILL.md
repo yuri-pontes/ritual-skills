@@ -5,13 +5,13 @@ description: Registra eventos ao vivo no log-diário pessoal. Diário de bordo, 
 
 # Ritual: Log
 
-Registro ao vivo no diário de bordo. Não é to-do, é histórico. O arquivo cresce do mais recente pro mais antigo (topo = hoje). Cru funciona melhor que caprichado.
+Registro ao vivo no diário de bordo. Guarda o que aconteceu no dia; tarefa vai pro backlog. O arquivo cresce do mais recente pro mais antigo (topo = hoje). Cru funciona melhor que caprichado.
 
-## Setup (só na primeira vez — se não houver `~/.ritual/config.json`)
+## Setup (só na primeira vez: se não houver `~/.ritual/config.json`)
 
 Se a config existir, pular pra execução. Se NÃO existir, conduzir o onboarding, uma pergunta por vez:
 
-1. "Primeira vez aqui. Vou te configurar em 1 minuto — depois é só rodar." Pergunta o nome.
+1. "Primeira vez aqui. Vou te configurar em 1 minuto: depois é só rodar." Pergunta o nome.
 2. Onde guardar os arquivos? (default `~/Documents/ritual/`, aceita caminho absoluto)
 3. **Quais áreas da vida você quer destravar ou acompanhar agora?** Lista abaixo, **recomenda começar com 1 ou 2**:
    - 🫀 Saúde física → treino, passos, peso, água, sol
@@ -23,7 +23,7 @@ Se a config existir, pular pra execução. Se NÃO existir, conduzir o onboardin
 4. Dentro de cada área, confirma quais métricas ligar.
 5. (Se ligou Projeto pessoal) Qual prática quer manter no radar? Nome livre.
 6. Tem Google Calendar conectado via MCP? (sim/não, default não).
-7. (Opcional) Usa gravador de call conectado — Fathom, Otter, etc? (sim/não, default não).
+7. (Opcional) Usa gravador de call conectado: Fathom, Otter, etc? (sim/não, default não).
 8. Grava `~/.ritual/config.json` (schema em `config.exemplo.json` na raiz) e cria `<base_path>/log-diario.md` com o cabeçalho abaixo e `<base_path>/backlog.md` com `# Backlog\n\n`, se não existirem.
 9. Mostra um resumo curto de uso (3 primeiras dicas de `dicas-uso.md` + "Rotina mínima") e confirma: "Pronto. Agora me manda o que quer registrar."
 
@@ -31,7 +31,7 @@ Cabeçalho do `log-diario.md`:
 ```md
 # Log Diário
 
-Diário de bordo. Cresce do mais recente pro mais antigo (topo = hoje). Não é to-do, é histórico.
+Diário de bordo. Cresce do mais recente pro mais antigo (topo = hoje). Guarda o que aconteceu no dia; tarefa vai pro backlog.
 
 ---
 ```
@@ -63,7 +63,7 @@ Isso é o que permite o `/ritual-analise` ler o histórico e calcular tendência
 Registros qualitativos ou avulsos (uma call, uma sacada, uma derrapada) vão em prosa curta:
 
 ```md
-### YYYY-MM-DD — <subtítulo opcional, ex: "Call com X">
+### YYYY-MM-DD: <subtítulo opcional, ex: "Call com X">
 
 **<Contexto>:** <registro em prosa curta>
 ```

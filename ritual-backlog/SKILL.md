@@ -5,13 +5,13 @@ description: Varre as últimas entradas do log-diário, extrai pendências e fol
 
 # Ritual: Backlog
 
-Vista derivada do log. O log captura a vida acontecendo, e muita coisa que aparece lá vira tarefa. Sem extração periódica, vira histórico morto. Roda semanal, não diário.
+Vista derivada do log. O log captura a vida acontecendo, e muita coisa que aparece lá vira tarefa. Sem extração periódica, vira histórico morto. Roda uma vez por semana.
 
-## Setup (só na primeira vez — se não houver `~/.ritual/config.json`)
+## Setup (só na primeira vez: se não houver `~/.ritual/config.json`)
 
 Se a config existir, pular pra execução. Se NÃO existir, conduzir o onboarding, uma pergunta por vez:
 
-1. "Primeira vez aqui. Vou te configurar em 1 minuto — depois é só rodar." Pergunta o nome.
+1. "Primeira vez aqui. Vou te configurar em 1 minuto: depois é só rodar." Pergunta o nome.
 2. Onde guardar os arquivos? (default `~/Documents/ritual/`, aceita caminho absoluto)
 3. **Quais áreas da vida você quer destravar ou acompanhar agora?** Lista abaixo, **recomenda começar com 1 ou 2**:
    - 🫀 Saúde física → treino, passos, peso, água, sol
@@ -58,7 +58,7 @@ Pra cada candidato: **tarefa** (verbo no infinitivo), **origem** (data do log), 
 Lista numerada, agrupada por categoria quando claro:
 
 ```
-[N] <Tarefa> (origem: log de YYYY-MM-DD) — <prazo se houver>
+[N] <Tarefa> (origem: log de YYYY-MM-DD): <prazo se houver>
 ```
 
 Fecha com:
